@@ -14,14 +14,6 @@ exports.up = (pgm) => {
       type: 'INTEGER',
       notNull: true,
     },
-    created_at: {
-      type: 'DATE',
-      notNull: true,
-    },
-    updated_at: {
-      type: 'DATE',
-      notNull: true,
-    },
   });
 };
 

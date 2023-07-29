@@ -14,7 +14,7 @@ exports.up = (pgm) => {
       type: 'INTEGER',
       notNull: true,
     },
-    perfoemer: {
+    performer: {
       type: 'TEXT',
       notNull: true,
     },
@@ -26,17 +26,8 @@ exports.up = (pgm) => {
       type: 'INTEGER',
       notNull: true,
     },
-    albumId: {
-      type: 'TEXT',
-      notNull: true,
-    },
-    created_at: {
-      type: 'DATE',
-      notNull: true,
-    },
-    updated_at: {
-      type: 'DATE',
-      notNull: true,
+    album_id: {
+      type: 'VARCHAR(50)',
     },
   });
 };
