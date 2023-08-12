@@ -1,4 +1,3 @@
-/* eslint-disable camelcase */
 exports.up = (pgm) => {
   pgm.createConstraint('songs', 'fk_songs.album_id_albums.id', {
     foreignKeys: {

@@ -1,5 +1,3 @@
-/* eslint-disable camelcase */
-
 exports.up = (pgm) => {
   pgm.createConstraint('collaborations', 'fk_collaborations.user_id_users.id', {
     foreignKeys: {

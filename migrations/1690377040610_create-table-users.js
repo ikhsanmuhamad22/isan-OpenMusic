@@ -1,5 +1,3 @@
-/* eslint-disable camelcase */
-
 exports.up = (pgm) => {
   pgm.createTable('users', {
     id: {
@@ -11,7 +9,7 @@ exports.up = (pgm) => {
       notNull: true,
     },
     password: {
-      type: 'VARCHAR(50)',
+      type: 'TEXT',
       notNull: true,
     },
     fullname: {

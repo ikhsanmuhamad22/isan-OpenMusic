@@ -1,5 +1,3 @@
-/* eslint-disable camelcase */
-
 exports.up = (pgm) => {
   pgm.createTable('playlist_song_activities', {
     id: {
@@ -23,7 +21,7 @@ exports.up = (pgm) => {
       notNull: true,
     },
     time: {
-      type: 'INTEGER',
+      type: 'VARCHAR(50)',
       notNull: true,
     },
   });
