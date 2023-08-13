@@ -63,11 +63,22 @@ class AlbumsService {
 
   async getSongByAlbum(albumId) {
     const query = {
-      text: 'SELECT songs.id,songs.title,songs.performer FROM songs JOIN albums ON songs.album_Id = albums.id WHERE songs.album_id = $1',
+      text: 'SELECT songs.id,songs.title,songs.performer,albums.cover FROM songs JOIN albums ON songs.album_Id = albums.id WHERE songs.album_id = $1',
       values: [albumId],
     };
     const result = await this._pool.query(query);
     return result.rows;
+  }
+
+  async addAlbumCover({ cover, id }) {
+    const query = {
+      text: 'UPDATE albums SET cover = $1 where id = $2 RETURNING id',
+      values: [cover, id],
+    };
+    const result = await this._pool.query(query);
+    if (!result.rowCount) {
+      throw new NotFoundError('id tidak ditemukan');
+    }
   }
 }
 

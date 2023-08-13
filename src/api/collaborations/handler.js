@@ -1,11 +1,10 @@
 const autoBind = require('auto-bind');
-const Verify = require('../../service/postgres/verifyService');
 
 class CollaborationsHandler {
-  constructor(service, validator) {
+  constructor(service, validator, verifyService) {
     this._service = service;
     this._validator = validator;
-    this._verify = new Verify();
+    this._verify = verifyService;
 
     autoBind(this);
   }

@@ -1,5 +1,7 @@
 const Hapi = require('@hapi/hapi');
 const Jwt = require('@hapi/jwt');
+const path = require('path');
+const inert = require('@hapi/inert');
 
 const albums = require('./api/albums');
 const AlbumsService = require('./service/postgres/albumsService');
@@ -27,21 +29,36 @@ const SongsValidator = require('./validator/songs');
 const collaborations = require('./api/collaborations');
 const CollaborationsValidator = require('./validator/collaborations');
 const activities = require('./api/activities');
+const ExportsValidator = require('./validator/exports');
+const exportss = require('./api/exportss');
+const ProducerService = require('./service/rabbitmq/producerService');
+const StorageService = require('./service/storage/storageService');
+const UploadsValidator = require('./validator/uploads');
+const uploads = require('./api/uploads');
+const Verify = require('./service/postgres/verifyService');
+const albumLikes = require('./api/albumLikes');
+const AlbumLikesService = require('./service/postgres/albumsLikeService');
+const CacheService = require('./service/redis/CacheService');
+const config = require('./utils/config');
 
 require('dotenv').config();
 
 const init = async () => {
+  const cacheService = new CacheService();
   const albumsService = new AlbumsService();
   const playlistsService = new PlaylistsService();
   const songsService = new SongsService();
   const collaborationsService = new CollaborationsService();
   const activitiesService = new ActivitiesService();
   const userService = new UsersService();
+  const verifyService = new Verify();
   const authenticationsService = new AuthenticationsService();
+  const storageService = new StorageService(path.resolve(__dirname, 'api/uploads/file/images-cover'));
+  const albumLikesService = new AlbumLikesService(cacheService);
 
   const server = Hapi.server({
-    port: process.env.PORT,
-    host: process.env.HOST,
+    port: config.app.port,
+    host: config.app.host,
     routes: {
       cors: {
         origin: ['*'],
@@ -52,6 +69,9 @@ const init = async () => {
   await server.register([
     {
       plugin: Jwt,
+    },
+    {
+      plugin: inert,
     },
   ]);
 
@@ -98,12 +118,14 @@ const init = async () => {
       options: {
         service: collaborationsService,
         validator: CollaborationsValidator,
+        verifyService,
       },
     },
     {
       plugin: activities,
       options: {
         service: activitiesService,
+        verifyService,
       },
     },
     {
@@ -122,11 +144,33 @@ const init = async () => {
         validator: AuthenticationsValidator,
       },
     },
+    {
+      plugin: exportss,
+      options: {
+        service: ProducerService,
+        validator: ExportsValidator,
+        verifyService,
+      },
+    },
+    {
+      plugin: uploads,
+      options: {
+        service: storageService,
+        validator: UploadsValidator,
+        albumsService,
+      },
+    },
+    {
+      plugin: albumLikes,
+      options: {
+        service: albumLikesService,
+        verifyService,
+      },
+    },
   ]);
 
   server.ext('onPreResponse', (request, h) => {
     const { response } = request;
-    // console.log(response);
     if (response instanceof Error) {
       if (response instanceof ClientError) {
         const newResponse = h.response({

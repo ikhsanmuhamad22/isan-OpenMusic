@@ -1,10 +1,9 @@
 const autoBind = require('auto-bind');
-const Verify = require('../../service/postgres/verifyService');
 
 class ActivitiesHandler {
-  constructor(service) {
+  constructor(service, verifyService) {
     this._service = service;
-    this._verify = new Verify();
+    this._verify = verifyService;
 
     autoBind(this);
   }

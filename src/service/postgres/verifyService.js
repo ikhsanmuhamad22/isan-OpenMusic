@@ -71,6 +71,17 @@ class Verify {
       throw new NotFoundError('song tidak ditemukan');
     }
   }
+
+  async verifyAlbum(albumId) {
+    const query = {
+      text: 'SELECT * FROM albums WHERE id = $1',
+      values: [albumId],
+    };
+    const song = await this._pool.query(query);
+    if (!song.rows.length) {
+      throw new NotFoundError('albums tidak ditemukan');
+    }
+  }
 }
 
 module.exports = Verify;

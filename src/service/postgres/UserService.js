@@ -4,7 +4,6 @@ const bcrypt = require('bcrypt');
 const InvariantError = require('../../exceptions/InvariantError');
 const AuthenticationError = require('../../exceptions/authenticationError');
 
-// * Method buat User
 class UsersService {
   constructor() {
     this._pool = new Pool();
